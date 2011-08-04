@@ -4,9 +4,10 @@ import java.io.IOException;
 
 import javax.jmdns.JmDNS;
 
+import com.dell.smartapp.common.Component;
 import com.dell.smartapp.common.Config;
 
-public class ServiceAnnouncer {
+public class ServiceAnnouncer implements Component {
 	
 	private JmDNS jmdns;
 	
@@ -18,7 +19,8 @@ public class ServiceAnnouncer {
 		this.jmdns = jmdns;
 	}
 	
-	public void start() {
+	@Override
+	public synchronized void start() {
 		try {
 			jmdns.registerService(Config.SERVICE_INFO);
 		} catch (IOException e) {
@@ -27,7 +29,8 @@ public class ServiceAnnouncer {
 		}
 	}
 	
-	public void stop() {
+	@Override
+	public synchronized void stop() {
 		jmdns.unregisterAllServices();
 	}
 

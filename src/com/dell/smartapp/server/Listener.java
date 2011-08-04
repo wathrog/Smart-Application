@@ -8,11 +8,12 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.dell.smartapp.common.Component;
 import com.dell.smartapp.common.Config;
 import com.dell.smartapp.common.ThreadingService;
 import com.dell.smartapp.server.api.SmartAppSvc;
 
-public class Listener {
+public class Listener implements Component {
 	
 	private Thread server = null;
 	
@@ -25,6 +26,7 @@ public class Listener {
 		this.service = service;
 	}
 	
+	@Override
 	public synchronized void start() {
 		if (server == null) {
 			server = new Thread(new Runnable() {
@@ -54,14 +56,18 @@ public class Listener {
 					
 				}
 			});
+			
+			server.start();
 		}
 		
 	}
 	
+	@SuppressWarnings("deprecation")
+	@Override
 	public synchronized void stop() {
 		server.interrupt();
 		try {
-			server.join();
+			server.join(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -94,7 +100,8 @@ class ConnectionServeTask implements Runnable {
 			
 			svc.helloWorld(clientName);
 			
-			out.write("OK");
+			out.write("OK\n");
+			out.flush();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
