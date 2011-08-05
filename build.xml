@@ -1,0 +1,81 @@
+<project name="SmartApp" basedir="." default="main">
+	
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="build"/>
+	<property name="classes.dir" value="${build.dir}/classes"/>
+	<property name="jar.dir" value="${build.dir}/jar"/>
+	<property name="lib.dir" value="lib"/>
+
+	
+	<property name="client-main" value="com.dell.smartapp.client.Client"/>
+	<property name="server-main" value="com.dell.smartapp.server.Server"/>
+	
+	<fileset dir="." id="project.class.path">
+		<include name="${lib.dir}/jmdns.jar"/>
+	</fileset>
+
+
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="clean up the build directory">
+        <delete dir="${build.dir}"/>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: compile                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+    	<javac srcdir="${src.dir}"
+         destdir="${classes.dir}"
+         classpath="${lib.dir}/jmdns.jar"
+         debug="on"
+    	 includeantruntime="no"
+    	 includejavaruntime="yes"
+	/>
+    </target>
+	
+	<!-- ================================= 
+          target: jar              
+         ================================= -->
+    <target name="jar" depends="compile" description="creates a jar file">
+        <mkdir dir="${jar.dir}"/>
+    	<jar destfile="${jar.dir}/${ant.project.name}-client.jar">
+    		<fileset dir="${classes.dir}"/>
+    		<zipfileset src="${lib.dir}/jmdns.jar"/>
+    		<manifest>
+    			<attribute name="Main-Class" value="${client-main}"/>
+    		</manifest>
+    	</jar>
+    	<jar destfile="${jar.dir}/${ant.project.name}-server.jar">
+    		<fileset dir="${classes.dir}"/>
+    	    <zipfileset src="${lib.dir}/jmdns.jar"/>
+    	    <manifest>
+    	    	<attribute name="Main-Class" value="${server-main}"/>
+    	    </manifest>
+    	 </jar>
+    </target>
+	
+	<!-- ================================= 
+          target: runserver              
+         ================================= -->
+    <target name="runserver" depends="jar" description="runs the server">
+        <java jar="${jar.dir}/${ant.project.name}-server.jar" fork="true"/>
+    </target>
+	
+	<!-- ================================= 
+	          target: runclient           
+	         ================================= -->
+	<target name="runclient" depends="jar" description="runs the client">
+		<java jar="${jar.dir}/${ant.project.name}-client.jar" fork="true"/>
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: clean-build                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean-build" depends="clean,jar"/>
+            
+	<target name="main" depends="jar"></target>
+
+</project>

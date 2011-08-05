@@ -6,11 +6,7 @@ import java.util.Vector;
 
 import javax.jmdns.JmDNS;
 
-import com.dell.smartapp.client.api.ServiceDiscovery;
 import com.dell.smartapp.client.impl.ServiceDiscoveryJmDNSImpl;
-import com.dell.smartapp.server.Listener;
-import com.dell.smartapp.server.ServiceAnnouncer;
-import com.dell.smartapp.server.impl.SmartAppSvcSimpleImpl;
 
 public class Client {
 	
